@@ -13,7 +13,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var shareButton: CustomButton!
     @IBOutlet weak var titleImageView: UIImageView!
     var qrCodeImage: UIImage?
-    
+    let sharedMessage =  """
+                        This is demo app from SMB tech.
+                        You can see this demo at thist link.
+                        https://github.com/apinun-wong/QRCodeSMBExample
+                        """
     override func viewDidLoad() {
         super.viewDidLoad()
         titleImageView.layer.borderColor = UIColor.systemCyan.cgColor
@@ -31,20 +35,22 @@ class ViewController: UIViewController {
         }
     }
     @IBAction func shareAction(_ sender: Any) {
-        let text =  """
-                    This is demo app from SMB text.
-                    You can see this demo at thist link.
-                    https://github.com/apinun-wong/QRCodeSMBExample
-                    """
-        self.shareImageAndText(image: qrCodeImage, message: text)
+
+        self.shareImageAndText(image: qrCodeImage, message: sharedMessage)
     }
     
     @objc func textFieldDidChange(_ textfield: UITextField) {
         shareButton.isEnabled = !(textfield.text?.isEmpty ?? true)
         guard let text = textfield.text, !text.isEmpty else { return }
-        let doc = QRCode.Document(utf8String: text, errorCorrection: .high)
         let logoImage = UIImage(named: "img_logo")
-        if let cgImage = logoImage?.cgImage {
+        let qrCodeImage = generateQRCode(text: text, image: logoImage)
+        self.qrCodeImage = qrCodeImage
+        titleImageView.image = qrCodeImage
+    }
+    
+    private func generateQRCode(text: String, image: UIImage?) -> UIImage? {
+        let doc = QRCode.Document(utf8String: text, errorCorrection: .high)
+        if let cgImage = image?.cgImage {
             let path = CGPath(ellipseIn: CGRect(x: 0.375, y: 0.375, width: 0.25, height: 0.25), transform: nil)
             doc.logoTemplate = QRCode.LogoTemplate(image: cgImage, path: path, inset: 8)
         }
@@ -58,11 +64,11 @@ class ViewController: UIViewController {
         
         let sizeImageView = titleImageView.bounds.size
         let originalSize = CGSize(width: sizeImageView.width * 2.0, height: sizeImageView.height * 2.0)
+        
         if let generated = doc.cgImage(originalSize) {
-            qrCodeImage = UIImage(cgImage: generated)
-            titleImageView.image = UIImage(cgImage: generated)
+            return UIImage(cgImage: generated)
         } else {
-            qrCodeImage = nil
+            return nil
         }
     }
 }
