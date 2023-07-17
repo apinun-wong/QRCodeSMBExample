@@ -9,6 +9,7 @@ import UIKit
 import QRCode
 
 class ViewController: UIViewController {
+    @IBOutlet weak var containerTextFieldView: UIView!
     @IBOutlet weak var titleTextField: AfterOneSecondTextField!
     @IBOutlet weak var shareButton: CustomButton!
     @IBOutlet weak var titleImageView: UIImageView!
@@ -22,6 +23,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         titleImageView.layer.borderColor = UIColor.systemCyan.cgColor
         titleImageView.layer.borderWidth = 2.0
+        containerTextFieldView.layer.borderColor = UIColor.systemCyan.cgColor
+        containerTextFieldView.layer.borderWidth = 2.0
         shareButton.setBackgroundColor(.systemBlue, for: .normal)
         shareButton.setBackgroundColor(.lightGray, for: .disabled)
         shareButton.isEnabled = false
@@ -35,7 +38,6 @@ class ViewController: UIViewController {
         }
     }
     @IBAction func shareAction(_ sender: Any) {
-
         self.shareImageAndText(image: qrCodeImage, message: sharedMessage)
     }
     
